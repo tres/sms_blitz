@@ -27,13 +27,13 @@ defmodule SmsBlitz.Adapters.TwilioTest do
         "sid" => sid,
         "body" => "testing"
       }
-      fake_response = %HTTPoison.Response{status_code: 200, body: Poison.encode!(response)}
+      fake_response = %HTTPoison.Response{status_code: 201, body: Poison.encode!(response)}
 
       with_mock HTTPoison, [post: fn(_, _, _, _) -> {:ok, fake_response} end] do
         result =
           Twilio.send_sms(auth, from: "+4412345678910", to: "+4423456789101", message: "Testing")
 
-        assert result == %{id: sid, result_string: "testing", status_code: 200}
+        assert result == {:ok, %{id: sid, result_string: "testing", status_code: 201}}
       end
     end
 
@@ -50,7 +50,7 @@ defmodule SmsBlitz.Adapters.TwilioTest do
         result =
           Twilio.send_sms(auth, from: "+4412345678910", to: "+4423456789101", message: "Testing")
 
-        assert result == %{id: sid, result_string: "testing error", status_code: 500}
+        assert result == {:error, %{id: sid, result_string: "testing error", status_code: 500}}
       end
     end
   end

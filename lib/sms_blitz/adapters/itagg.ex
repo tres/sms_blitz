@@ -18,16 +18,30 @@ defmodule SmsBlitz.Adapters.Itagg do
     |> handle_response!
   end
 
-  defp handle_response!({:ok, %HTTPoison.Response{body: resp, status_code: status_code}}) do
+
+  defp handle_response!({:ok, %HTTPoison.Response{body: resp, status_code: status_code}})
+       when(status_code >= 200 and status_code < 300) do
     parse_response(resp)
     |> Enum.map(fn (response) ->
-      %{
+      {:ok, %{
         id: response.submission_reference,
         result_string: response.error_text,
         status_code: status_code
-      }
+      }}
     end)
   end
+
+  defp handle_response!({:ok, %HTTPoison.Response{body: resp, status_code: status_code}}) do
+    parse_response(resp)
+    |> Enum.map(fn (response) ->
+      {:ok, %{
+        id: response.submission_reference,
+        result_string: response.error_text,
+        status_code: status_code
+      }}
+    end)
+  end
+
 
   defp parse_response(body) when is_binary(body) do
     # Remove trailing newline and split by newlines

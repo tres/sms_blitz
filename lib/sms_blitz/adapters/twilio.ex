@@ -29,12 +29,21 @@ defmodule SmsBlitz.Adapters.Twilio do
     |> handle_response!
   end
 
+  defp handle_response!({:ok, %HTTPoison.Response{body: resp, status_code: 201}}) do
+    resp_json = Poison.decode!(resp)
+    {:ok, %{
+      id: resp_json["sid"],
+      result_string: resp_json["body"],
+      status_code: 201
+    }}
+  end
+
   defp handle_response!({:ok, %HTTPoison.Response{body: resp, status_code: status_code}}) do
     resp_json = Poison.decode!(resp)
-    %{
+    {:error, %{
       id: resp_json["sid"],
       result_string: resp_json["error_message"] || resp_json["body"],
       status_code: status_code
-    }
+    }}
   end
 end

@@ -36,7 +36,7 @@ defmodule SmsBlitz.Adapters.NexmoTest do
         result =
           Nexmo.send_sms(auth, from: "+4412345678910", to: "+4423456789101", message: "Testing")
 
-        assert result == %{id: "0A0000000123ABCD1", result_string: "success", status_code: "0"}
+        assert result == {:ok, %{id: "0A0000000123ABCD1", result_string: "success", status_code: "0"}}
 
         assert called(
                  HTTPoison.post("https://rest.nexmo.com/sms/json", :_, [
@@ -63,7 +63,7 @@ defmodule SmsBlitz.Adapters.NexmoTest do
         result =
           Nexmo.send_sms(auth, from: "+4412345678910", to: "+4423456789101", message: "Testing")
 
-        assert result == %{id: "testing", result_string: "Missing to param", status_code: "2"}
+        assert result == {:error, %{id: "testing", result_string: "Missing to param", status_code: "2"}}
 
         assert called(
                  HTTPoison.post("https://rest.nexmo.com/sms/json", :_, [

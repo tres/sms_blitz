@@ -44,7 +44,7 @@ defmodule SmsBlitz.Adapters.Nexmo do
 
   defp handle_messages(_, %{"messages" => [%{"status" => status, "message-id" => message_id}]})
        when status == "0" do
-    respond(message_id, "success", status)
+    respond(:ok, message_id, "success", status)
   end
 
   defp handle_messages(headers, %{
@@ -56,14 +56,14 @@ defmodule SmsBlitz.Adapters.Nexmo do
         _ -> false
       end)
 
-    respond(trace_id, error_text, status)
+    respond(:error, trace_id, error_text, status)
   end
 
-  defp respond(id, result, status) do
-    %{
+  defp respond(response_status, id, result, status) do
+  {response_status, %{
       id: id,
       result_string: result,
       status_code: status
-    }
+    }}
   end
 end

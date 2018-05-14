@@ -26,7 +26,7 @@ defmodule SmsBlitz.Adapters.ItaggTest do
         result =
           Itagg.send_sms(auth, from: "+4412345678910", to: "+4423456789101", message: "Testing")
 
-        assert result == [%{id: "eb725f96b4b094d5f8318741cc1a545f-2", result_string: "sms submitted", status_code: 200}]
+        assert result == [{:ok, %{id: "eb725f96b4b094d5f8318741cc1a545f-2", result_string: "sms submitted", status_code: 200}}]
         assert called HTTPoison.post("https://secure.itagg.com/smsg/sms.mes", :_)
       end
     end
@@ -40,7 +40,7 @@ defmodule SmsBlitz.Adapters.ItaggTest do
         result =
           Itagg.send_sms(auth, from: "+4412345678910", to: "+4423456789101", message: "Testing")
 
-        assert result == [%{id: "0", result_string: "submission failed (insufficient funds)", status_code: 500}]
+        assert result == [{:ok,%{id: "0", result_string: "submission failed (insufficient funds)", status_code: 500}}]
         assert called HTTPoison.post("https://secure.itagg.com/smsg/sms.mes", :_)
       end
     end
